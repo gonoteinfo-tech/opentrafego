@@ -1,9 +1,19 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key';
+const getSupabaseConfig = () => {
+  if (typeof window !== 'undefined') {
+    const url = (window as any).__SUPABASE_URL__ || process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
+    const key = (window as any).__SUPABASE_ANON_KEY__ || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key';
+    return { url, key };
+  }
+  return {
+    url: process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
+    key: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key'
+  };
+};
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+const { url, key } = getSupabaseConfig();
+export const supabase = createClient(url, key);
 
 export interface Profile {
   id: string;
